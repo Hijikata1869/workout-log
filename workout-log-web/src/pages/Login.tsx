@@ -32,7 +32,7 @@ export const Login = () => {
     });
 
     if (res.ok) {
-      navigate("/mypage");
+      navigate("/");
     } else {
       setEmail("");
       setPassword("");
