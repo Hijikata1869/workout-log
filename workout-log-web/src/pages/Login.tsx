@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -19,24 +20,32 @@ export const Login = () => {
     event: React.SubmitEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}session`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-      credentials: "include",
-    });
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+        credentials: "include",
+      });
 
-    if (res.ok) {
-      navigate("/");
-    } else {
-      setEmail("");
-      setPassword("");
-      alert("ログイン失敗！");
+      if (res.ok) {
+        navigate("/");
+      } else {
+        setEmail("");
+        setPassword("");
+        alert("ログイン失敗！");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("通信に失敗しました");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -66,7 +75,10 @@ export const Login = () => {
           />
         </label>
         <br />
-        <button className="p-3 cursor-pointer bg-gray-500 text-gray-100 rounded hover:bg-gray-400">
+        <button
+          className="p-3 cursor-pointer bg-gray-500 text-gray-100 rounded hover:bg-gray-400"
+          disabled={isSubmitting}
+        >
           ログイン
         </button>
       </form>
