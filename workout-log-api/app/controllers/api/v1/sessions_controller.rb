@@ -5,7 +5,7 @@ class Api::V1::SessionsController < ApplicationController
   def create
     if user = User.authenticate_by(params.permit(:email, :password))
       start_new_session_for user
-      render json: { message: "ログインしました" }, status: :ok
+      render json: user.safe_attributes, status: :ok
     else
       render json: { errors: [ "メールアドレスかパスワードが間違っています" ] }, status: :unauthorized
     end
