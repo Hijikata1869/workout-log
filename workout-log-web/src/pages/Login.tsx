@@ -35,6 +35,8 @@ export const Login = () => {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        console.log(data);
         navigate("/");
       } else {
         setEmail("");
@@ -82,7 +84,7 @@ export const Login = () => {
           ログイン
         </button>
       </form>
-      <Link to="/">トップ画面へ</Link>
+      <Link to="/signup">新規登録はこちら</Link>
     </>
   );
 };

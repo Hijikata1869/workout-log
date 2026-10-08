@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 
 type ErrorResponse = {
   errors: string[];
@@ -126,6 +126,7 @@ export const SignUp = () => {
           新規登録
         </button>
       </form>
+      <Link to="/login">ログインはこちら</Link>
     </>
   );
 };
