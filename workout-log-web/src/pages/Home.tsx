@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
 
@@ -13,30 +13,7 @@ export const Home = () => {
 
   const navigate = useNavigate();
 
-  const { user, status } = useAuth();
-
-  //   useEffect(() => {
-  //     const fetchUser = async () => {
-  //       try {
-  //         const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}session`, {
-  //           method: "GET",
-  //           credentials: "include",
-  //         });
-  //         if (res.ok) {
-  //           const data = await res.json();
-  //           setNickname(data.nickname);
-  //           setEmail(data.email);
-  //         } else {
-  //           navigate("/login");
-  //         }
-  //       } catch (error) {
-  //         console.error(error);
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     };
-  //     fetchUser();
-  //   }, [navigate]);
+  const { user, status, logout } = useAuth();
 
   const onChangeNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
@@ -111,27 +88,15 @@ export const Home = () => {
     }
   };
 
-  const onClickLogOutButton = async () => {
+  const onClickLogout = async () => {
     setIsSubmitting(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}session`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (res.ok) {
-        alert("ログアウトしました");
-        navigate("/login");
-      } else {
-        const errorMessage: ErrorResponse = await res.json();
-        alert(errorMessage.errors.join("\n"));
-      }
-    } catch (error) {
-      console.error(error);
-      alert("通信失敗しました");
-    } finally {
-      setIsSubmitting(false);
+    const result = await logout();
+    if (result.ok) {
+      alert("ログアウトしました");
+    } else {
+      alert(result.errors.join("\n"));
     }
+    setIsSubmitting(false);
   };
 
   if (status === "loading") {
@@ -144,7 +109,7 @@ export const Home = () => {
       <button
         type="button"
         className="cursor-pointer p-3 rounded bg-sky-500 text-gray-100 hover:bg-sky-400 mb-10"
-        onClick={onClickLogOutButton}
+        onClick={onClickLogout}
         disabled={isSubmitting}
       >
         ログアウト
@@ -193,7 +158,7 @@ export const Home = () => {
         </button>
       </div>
       <div>
-        <p className="font-bold text-5xl">{user.nickname}</p>
+        <p className="font-bold text-5xl">{user?.nickname}</p>
       </div>
     </>
   );
