@@ -13,7 +13,7 @@ export const Home = () => {
 
   const navigate = useNavigate();
 
-  const { user, status, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const onChangeNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
@@ -98,10 +98,6 @@ export const Home = () => {
     }
     setIsSubmitting(false);
   };
-
-  if (status === "loading") {
-    return <p>読み込み中</p>;
-  }
 
   return (
     <>

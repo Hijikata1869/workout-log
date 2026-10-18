@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
-
-type ErrorResponse = {
-  errors: string[];
-};
+import { Link } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 export const SignUp = () => {
   const [nickname, setNickname] = useState("");
@@ -12,7 +9,7 @@ export const SignUp = () => {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const onChangeNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
@@ -35,35 +32,21 @@ export const SignUp = () => {
   ) => {
     event.preventDefault();
     setIsSubmitting(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user: {
-            nickname: nickname,
-            email: email,
-            password: password,
-            password_confirmation: passwordConfirmation,
-          },
-        }),
-        credentials: "include",
-      });
 
-      if (res.ok) {
-        navigate("/");
-      } else {
-        const errorMessage: ErrorResponse = await res.json();
-        alert(errorMessage.errors.join("\n"));
-      }
-    } catch (error) {
-      console.error(error);
-      alert("通信に失敗しました");
-    } finally {
-      setIsSubmitting(false);
+    const result = await signup({
+      nickname,
+      email,
+      password,
+      passwordConfirmation,
+    });
+
+    if (result.ok) {
+      alert("会員登録が完了しました");
+    } else {
+      alert(result.errors.join("\n"));
     }
+
+    setIsSubmitting(false);
   };
 
   return (

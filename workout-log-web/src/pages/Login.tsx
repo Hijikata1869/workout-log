@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
+import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const navigate = useNavigate();
+  const { login } = useAuth();
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -16,45 +17,26 @@ export const Login = () => {
     setPassword(event.target.value);
   };
 
-  const onClickSubmitForm = async (
-    event: React.SubmitEvent<HTMLFormElement>,
-  ) => {
+  const onSubmitLogin = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-        credentials: "include",
-      });
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log(data);
-        navigate("/");
-      } else {
-        setEmail("");
-        setPassword("");
-        alert("ログイン失敗！");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("通信に失敗しました");
-    } finally {
-      setIsSubmitting(false);
+    setIsSubmitting(true);
+
+    const result = await login(email, password);
+
+    if (result.ok) {
+      alert("ログインしました");
+    } else {
+      alert(result.errors.join("\n"));
     }
+
+    setIsSubmitting(false);
   };
 
   return (
     <>
       <h1 className="font-bold text-3xl mb-10">ログイン</h1>
-      <form className="mb-10" onSubmit={onClickSubmitForm}>
+      <form className="mb-10" onSubmit={onSubmitLogin}>
         <label>
           Eメール：
           <input
