@@ -1,19 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import { useAuth } from "../context/AuthContext";
-
-type ErrorResponse = {
-  errors: string[];
-};
 
 export const Home = () => {
   const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const navigate = useNavigate();
-
-  const { user, logout } = useAuth();
+  const { user, logout, deleteAccount } = useAuth();
 
   const onChangeNickname = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(event.target.value);
@@ -68,24 +61,16 @@ export const Home = () => {
       return;
     }
     setIsSubmitting(true);
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}users`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (res.ok) {
-        alert("削除しました");
-        navigate("/login");
-      } else {
-        const errorMessage: ErrorResponse = await res.json();
-        alert(errorMessage.errors.join("\n"));
-      }
-    } catch (error) {
-      console.error(error);
-      alert("通信に失敗しました");
-    } finally {
-      setIsSubmitting(false);
+
+    const result = await deleteAccount();
+
+    if (result.ok) {
+      alert("アカウントを削除しました");
+    } else {
+      alert(result.errors.join("\n"));
     }
+
+    setIsSubmitting(false);
   };
 
   const onClickLogout = async () => {

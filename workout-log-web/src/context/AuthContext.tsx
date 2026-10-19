@@ -19,6 +19,7 @@ type AuthContextValue = {
   logout: () => Promise<Result>;
   login: (email: string, password: string) => Promise<Result>;
   signup: (params: SignupParams) => Promise<Result>;
+  deleteAccount: () => Promise<Result>;
 };
 
 type ErrorResponse = {
@@ -139,8 +140,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const deleteAccount = async (): Promise<Result> => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}users`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setUser(null);
+        setStatus("unauthenticated");
+        return { ok: true };
+      } else {
+        const errorResponse: ErrorResponse = await res.json();
+        const errorMessages = errorResponse.errors;
+        return { ok: false, errors: errorMessages };
+      }
+    } catch (error) {
+      console.error(error);
+      return { ok: false, errors: ["通信に失敗しました"] };
+    }
+  };
+
   return (
-    <AuthContext value={{ user, status, logout, login, signup }}>
+    <AuthContext value={{ user, status, logout, login, signup, deleteAccount }}>
       {children}
     </AuthContext>
   );
