@@ -20,6 +20,7 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<Result>;
   signup: (params: SignupParams) => Promise<Result>;
   deleteAccount: () => Promise<Result>;
+  updateUser: (nickname: string, email: string) => Promise<Result>;
 };
 
 type ErrorResponse = {
@@ -162,8 +163,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const updateUser = async (
+    nickname: string,
+    email: string,
+  ): Promise<Result> => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}users`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: {
+            nickname: nickname,
+            email: email,
+          },
+        }),
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        const user = await res.json();
+        setUser(user);
+        return { ok: true };
+      } else {
+        const errorResponse: ErrorResponse = await res.json();
+        const errorMessages = errorResponse.errors;
+        return { ok: false, errors: errorMessages };
+      }
+    } catch (error) {
+      console.error(error);
+      return { ok: false, errors: ["通信に失敗しました"] };
+    }
+  };
+
   return (
-    <AuthContext value={{ user, status, logout, login, signup, deleteAccount }}>
+    <AuthContext
+      value={{ user, status, logout, login, signup, deleteAccount, updateUser }}
+    >
       {children}
     </AuthContext>
   );
