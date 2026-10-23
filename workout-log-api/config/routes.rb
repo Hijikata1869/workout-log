@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :session, only: %i[create show destroy]
       resource :users, only: %i[create update destroy]
+      resources :exercises
     end
   end
 end
