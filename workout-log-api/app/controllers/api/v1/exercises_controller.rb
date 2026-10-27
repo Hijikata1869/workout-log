@@ -15,6 +15,12 @@ class Api::V1::ExercisesController < ApplicationController
     end
   end
 
+  def destroy
+    exercise = current_user.exercises.find(params[:id])
+    exercise.destroy
+    head :no_content
+  end
+
   private
 
     def exercise_params
