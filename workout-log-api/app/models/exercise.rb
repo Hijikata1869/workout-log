@@ -5,6 +5,12 @@ class Exercise < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :user_id }, length: { maximum: 50 }
 
+  scope :recent, -> { order(created_at: :desc, id: :desc) }
+
+  def safe_exercise_attributes
+    { id: id, name: name }
+  end
+
   private
 
     def sanitize_name
