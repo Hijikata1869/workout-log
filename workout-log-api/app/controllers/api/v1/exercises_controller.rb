@@ -3,7 +3,7 @@ class Api::V1::ExercisesController < ApplicationController
 
   def index
     exercises = current_user.exercises.recent.map do |exercise|
-      exercise.safe_exercise_attributes
+      exercise.safe_attributes
     end
     render json: exercises, status: :ok
   end
@@ -11,7 +11,7 @@ class Api::V1::ExercisesController < ApplicationController
   def create
     exercise = current_user.exercises.build(exercise_params)
     if exercise.save
-      render json: exercise.safe_exercise_attributes, status: :created
+      render json: exercise.safe_attributes, status: :created
     else
       render json: { errors: exercise.errors.full_messages }, status: :unprocessable_content
     end
@@ -19,7 +19,7 @@ class Api::V1::ExercisesController < ApplicationController
 
   def update
     if @exercise.update(exercise_params)
-      render json: @exercise.safe_exercise_attributes, status: :ok
+      render json: @exercise.safe_attributes, status: :ok
     else
       render json: { errors: @exercise.errors.full_messages }, status: :unprocessable_content
     end
