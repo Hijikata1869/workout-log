@@ -26,8 +26,11 @@ class Api::V1::ExercisesController < ApplicationController
   end
 
   def destroy
-    @exercise.destroy
-    head :no_content
+    if @exercise.destroy
+      head :no_content
+    else
+      render json: { errors: @exercise.errors.full_messages }, status: :unprocessable_content
+    end
   end
 
   private
