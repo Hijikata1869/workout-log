@@ -7,7 +7,7 @@ class Exercise < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc, id: :desc) }
 
-  def safe_exercise_attributes
+  def safe_attributes
     { id: id, name: name }
   end
 
