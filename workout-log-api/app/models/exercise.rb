@@ -1,6 +1,8 @@
 class Exercise < ApplicationRecord
   belongs_to :user
 
+  has_many :workout_exercises, dependent: :restrict_with_error
+
   before_validation :sanitize_name
 
   validates :name, presence: true, uniqueness: { scope: :user_id }, length: { maximum: 50 }
