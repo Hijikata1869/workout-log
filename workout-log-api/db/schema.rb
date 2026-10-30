@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_113317) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_29_111000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,6 +38,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_113317) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
+  create_table "workout_exercises", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "exercise_id", null: false
+    t.text "memo"
+    t.datetime "updated_at", null: false
+    t.bigint "workout_id", null: false
+    t.index ["exercise_id"], name: "index_workout_exercises_on_exercise_id"
+    t.index ["workout_id", "exercise_id"], name: "index_workout_exercises_on_workout_id_and_exercise_id", unique: true
+  end
+
   create_table "workouts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
@@ -49,5 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_113317) do
 
   add_foreign_key "exercises", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "workout_exercises", "exercises"
+  add_foreign_key "workout_exercises", "workouts"
   add_foreign_key "workouts", "users"
 end
