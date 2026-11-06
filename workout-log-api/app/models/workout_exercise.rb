@@ -7,4 +7,9 @@ class WorkoutExercise < ApplicationRecord
   validates :exercise_id, uniqueness: { scope: :workout_id }
 
   validates :memo, length: { maximum: 1000 }
+
+  def safe_attributes
+    workout_sets_json = workout_sets.ordered.map { |s| s.safe_attributes }
+    { id: id, exercise: exercise.safe_attributes, memo: memo, sets: workout_sets_json }
+  end
 end

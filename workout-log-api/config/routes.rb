@@ -6,7 +6,9 @@ Rails.application.routes.draw do
       resource :session, only: %i[create show destroy]
       resource :users, only: %i[create update destroy]
       resources :exercises, only: %i[index create update destroy]
-      resources :workouts
+      resources :workouts, only: %i[index create show update destroy] do
+        resources :sets, only: [ :create ], controller: "workout_sets"
+      end
     end
   end
 end
