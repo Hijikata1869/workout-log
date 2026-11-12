@@ -19,7 +19,7 @@ class Api::V1::WorkoutsController < ApplicationController
   end
 
   def show
-    render json: @workout.safe_attributes, status: :ok
+    render json: @workout.detail_attributes, status: :ok
   end
 
   def update
