@@ -1,4 +1,6 @@
 class Api::V1::WorkoutSetsController < ApplicationController
+  before_action :set_workout_set, only: %i[update destroy]
+
   def create
     workout = current_user.workouts.find(params[:workout_id])
 
@@ -19,16 +21,28 @@ class Api::V1::WorkoutSetsController < ApplicationController
   end
 
   def update
-    workout_set = current_user.workout_sets.find(params[:id])
-    if workout_set.update(workout_set_params)
-      render json: workout_set.workout_exercise.safe_attributes, status: :ok
+    if @workout_set.update(workout_set_params)
+      render json: @workout_set.workout_exercise.safe_attributes, status: :ok
     else
-      render json: { errors: workout_set.errors.full_messages }, status: :unprocessable_content
+      render json: { errors: @workout_set.errors.full_messages }, status: :unprocessable_content
+    end
+  end
+
+  def destroy
+    workout_exercise = @workout_set.workout_exercise
+    if @workout_set.destroy
+      render json: workout_exercise.safe_attributes, status: :ok
+    else
+      render json: { errors: @workout_set.errors.full_messages }, status: :unprocessable_content
     end
   end
 
   private
     def workout_set_params
       params.expect(workout_set: %i[weight reps interval_seconds])
+    end
+
+    def set_workout_set
+      @workout_set = current_user.workout_sets.find(params[:id])
     end
 end
