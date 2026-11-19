@@ -18,6 +18,15 @@ class Api::V1::WorkoutSetsController < ApplicationController
     render json: { errors: e.record.errors.full_messages }, status: :unprocessable_content
   end
 
+  def update
+    workout_set = current_user.workout_sets.find(params[:id])
+    if workout_set.update(workout_set_params)
+      render json: workout_set.workout_exercise.safe_attributes, status: :ok
+    else
+      render json: { errors: workout_set.errors.full_messages }, status: :unprocessable_content
+    end
+  end
+
   private
     def workout_set_params
       params.expect(workout_set: %i[weight reps interval_seconds])

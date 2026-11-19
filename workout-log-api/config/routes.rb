@@ -7,7 +7,7 @@ Rails.application.routes.draw do
       resource :users, only: %i[create update destroy]
       resources :exercises, only: %i[index create update destroy]
       resources :workouts, only: %i[index create show update destroy] do
-        resources :sets, only: [ :create ], controller: "workout_sets"
+        resources :sets, only: %i[create update destroy], controller: "workout_sets", shallow: true
       end
     end
   end
