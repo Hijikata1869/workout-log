@@ -3,6 +3,8 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :exercises, dependent: :destroy
   has_many :workouts, dependent: :destroy
+  has_many :workout_exercises, through: :workouts
+  has_many :workout_sets, through: :workout_exercises
 
   validates :nickname, presence: true, length: { maximum: 30 }
   validates :email, presence: true, uniqueness: { case_sensitive: false }, format: { with: URI::MailTo::EMAIL_REGEXP }
