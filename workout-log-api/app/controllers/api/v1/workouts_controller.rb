@@ -9,10 +9,10 @@ class Api::V1::WorkoutsController < ApplicationController
   end
 
   def create
-    workout = current_user.workouts.build(workout_params)
+    workout = current_user.workouts.find_or_create_by(date: workout_params[:date])
 
-    if workout.save
-      render json: workout.safe_attributes, status: :created
+    if workout.persisted?
+      render json: workout.safe_attributes, status: :ok
     else
       render json: { errors: workout.errors.full_messages }, status: :unprocessable_content
     end
@@ -23,7 +23,7 @@ class Api::V1::WorkoutsController < ApplicationController
   end
 
   def update
-    if @workout.update(workout_params)
+    if @workout.update(update_params)
       render json: @workout.safe_attributes, status: :ok
     else
       render json: { errors: @workout.errors.full_messages }, status: :unprocessable_content
@@ -40,7 +40,11 @@ class Api::V1::WorkoutsController < ApplicationController
 
   private
     def workout_params
-      params.expect(workout: %i[memo date])
+      params.expect(workout: [ :date ])
+    end
+
+    def update_params
+      params.expect(workout: [ :memo ])
     end
 
     def set_workout
