@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
+import { getTodayDateString } from "../utils/date";
+import { createWorkout } from "../lib/workout";
 
 export const Home = () => {
   const { user, logout, deleteAccount, updateUser } = useAuth();
+
+  const navigate = useNavigate();
 
   const [nickname, setNickname] = useState(user!.nickname);
   const [email, setEmail] = useState(user!.email);
@@ -60,9 +65,30 @@ export const Home = () => {
     setIsSubmitting(false);
   };
 
+  const onClickRecordButton = async () => {
+    setIsSubmitting(true);
+    const today = getTodayDateString();
+    const result = await createWorkout(today);
+    if (result.ok) {
+      navigate(`/workouts/${result.data.id}`);
+    } else {
+      alert(result.errors.join("\n"));
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <>
       <h1 className="font-bold text-2xl pb-5">マイページ</h1>
+      <button
+        type="button"
+        className="cursor-pointer mb-5 p-3 rounded bg-orange-500 text-gray-100 hover:bg-orange-400"
+        onClick={onClickRecordButton}
+        disabled={isSubmitting}
+      >
+        今日のトレーニングを記録する
+      </button>
+      <br />
       <button
         type="button"
         className="cursor-pointer p-3 rounded bg-sky-500 text-gray-100 hover:bg-sky-400 mb-10"
@@ -102,6 +128,7 @@ export const Home = () => {
           >
             登録情報の更新
           </button>
+          <br />
         </form>
       </div>
       <div>

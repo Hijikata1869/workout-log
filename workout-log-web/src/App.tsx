@@ -5,6 +5,7 @@ import { GuestOnly } from "./components/GuestOnly";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
+import { Workout } from "./pages/Workout";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
             <GuestOnly>
               <SignUp />
             </GuestOnly>
+          }
+        />
+        <Route
+          path="workouts/:workoutId"
+          element={
+            <RequireAuth>
+              <Workout />
+            </RequireAuth>
           }
         />
       </Routes>
