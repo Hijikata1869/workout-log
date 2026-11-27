@@ -4,8 +4,4 @@ export type Workout = {
     memo: string | null;
 };
 
-export type ErrorResponse = {
-    errors: string[];
-};
-
-export type CreateWorkoutResult = { ok: true, data: Workout } | { ok: false; errors: string[] };
+export type CreateWorkoutResult = { ok: true; data: Workout } | { ok: false; errors: string[] };
